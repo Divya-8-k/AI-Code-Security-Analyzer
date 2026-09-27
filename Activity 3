@@ -1,0 +1,902 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyOpGC2axylyyHakdfT4wGad",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/Divya-8-k/AI-Code-Security-Analyzer/blob/main/Activity%203\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install flake8 pylint bandit"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "MJCLT4esCrJ1",
+        "outputId": "35e0d843-5714-486a-aa95-00937bdf54a4"
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Collecting flake8\n",
+            "  Downloading flake8-7.4.1-py2.py3-none-any.whl.metadata (3.8 kB)\n",
+            "Collecting pylint\n",
+            "  Downloading pylint-4.0.9-py3-none-any.whl.metadata (12 kB)\n",
+            "Collecting bandit\n",
+            "  Downloading bandit-1.9.4-py3-none-any.whl.metadata (7.1 kB)\n",
+            "Collecting mccabe<0.8.0,>=0.7.0 (from flake8)\n",
+            "  Downloading mccabe-0.7.0-py2.py3-none-any.whl.metadata (5.0 kB)\n",
+            "Collecting pycodestyle<2.16.0,>=2.15.0 (from flake8)\n",
+            "  Downloading pycodestyle-2.15.0-py2.py3-none-any.whl.metadata (4.5 kB)\n",
+            "Collecting pyflakes<4.1.0,>=4.0.0 (from flake8)\n",
+            "  Downloading pyflakes-4.0.0-py2.py3-none-any.whl.metadata (3.5 kB)\n",
+            "Collecting astroid<=4.1.dev0,>=4.0.2 (from pylint)\n",
+            "  Downloading astroid-4.0.4-py3-none-any.whl.metadata (4.4 kB)\n",
+            "Requirement already satisfied: dill>=0.3.6 in /usr/local/lib/python3.13/dist-packages (from pylint) (0.4.1)\n",
+            "Collecting isort!=5.13,<10,>=5 (from pylint)\n",
+            "  Downloading isort-9.0.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (11 kB)\n",
+            "Requirement already satisfied: platformdirs>=2.2 in /usr/local/lib/python3.13/dist-packages (from pylint) (4.11.7)\n",
+            "Requirement already satisfied: tomlkit>=0.10.1 in /usr/local/lib/python3.13/dist-packages (from pylint) (0.14.0)\n",
+            "Requirement already satisfied: PyYAML>=5.3.1 in /usr/local/lib/python3.13/dist-packages (from bandit) (6.0.3)\n",
+            "Collecting stevedore>=1.20.0 (from bandit)\n",
+            "  Downloading stevedore-5.9.1-py3-none-any.whl.metadata (2.3 kB)\n",
+            "Requirement already satisfied: rich in /usr/local/lib/python3.13/dist-packages (from bandit) (13.9.4)\n",
+            "Collecting mypy-extensions>=1.1.0 (from isort!=5.13,<10,>=5->pylint)\n",
+            "  Downloading mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)\n",
+            "Requirement already satisfied: markdown-it-py>=2.2.0 in /usr/local/lib/python3.13/dist-packages (from rich->bandit) (4.2.0)\n",
+            "Requirement already satisfied: pygments<3.0.0,>=2.13.0 in /usr/local/lib/python3.13/dist-packages (from rich->bandit) (2.21.0)\n",
+            "Requirement already satisfied: mdurl~=0.1 in /usr/local/lib/python3.13/dist-packages (from markdown-it-py>=2.2.0->rich->bandit) (0.1.2)\n",
+            "Downloading flake8-7.4.1-py2.py3-none-any.whl (57 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m57.4/57.4 kB\u001b[0m \u001b[31m1.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading pylint-4.0.9-py3-none-any.whl (542 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m542.1/542.1 kB\u001b[0m \u001b[31m7.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading bandit-1.9.4-py3-none-any.whl (134 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m134.7/134.7 kB\u001b[0m \u001b[31m14.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading astroid-4.0.4-py3-none-any.whl (276 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m276.4/276.4 kB\u001b[0m \u001b[31m26.7 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading isort-9.0.1-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (1.6 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m1.6/1.6 MB\u001b[0m \u001b[31m31.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading mccabe-0.7.0-py2.py3-none-any.whl (7.3 kB)\n",
+            "Downloading pycodestyle-2.15.0-py2.py3-none-any.whl (31 kB)\n",
+            "Downloading pyflakes-4.0.0-py2.py3-none-any.whl (65 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m65.9/65.9 kB\u001b[0m \u001b[31m6.8 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading stevedore-5.9.1-py3-none-any.whl (54 kB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m54.9/54.9 kB\u001b[0m \u001b[31m5.6 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)\n",
+            "Installing collected packages: stevedore, pyflakes, pycodestyle, mypy-extensions, mccabe, astroid, isort, flake8, pylint, bandit\n",
+            "Successfully installed astroid-4.0.4 bandit-1.9.4 flake8-7.4.1 isort-9.0.1 mccabe-0.7.0 mypy-extensions-1.1.0 pycodestyle-2.15.0 pyflakes-4.0.0 pylint-4.0.9 stevedore-5.9.1\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!flake8 --version\n",
+        "!pylint --version\n",
+        "!bandit --version"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "r56qIXZBCxc_",
+        "outputId": "3d49432d-c2d1-4075-f5ee-6b5eb0e283ec"
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "7.4.1 (mccabe: 0.7.0, pycodestyle: 2.15.0, pyflakes: 4.0.0) CPython 3.13.15 on\n",
+            "Linux\n",
+            "pylint 4.0.9\n",
+            "astroid 4.0.4\n",
+            "Python 3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]\n",
+            "bandit 1.9.4\n",
+            "  python version = 3.13.15 (main, Aug  6 2026, 11:06:22) [GCC 13.3.0]\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!flake8 sample.py > flake8_report.txt\n",
+        "!pylint sample.py > pylint_report.txt\n",
+        "!bandit -r sample.py > bandit_report.txt"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "egiimVmeC3UJ",
+        "outputId": "a21f0942-3452-4521-d55b-9dae636534aa"
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[main]\tINFO\tprofile include tests: None\n",
+            "[main]\tINFO\tprofile exclude tests: None\n",
+            "[main]\tINFO\tcli include tests: None\n",
+            "[main]\tINFO\tcli exclude tests: None\n",
+            "[main]\tINFO\trunning on Python 3.13.15\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!bandit -r sample.py"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "SBtmCQMUDJd1",
+        "outputId": "4686fc73-b1e2-4cf3-f606-a533c028c67e"
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[main]\tINFO\tprofile include tests: None\n",
+            "[main]\tINFO\tprofile exclude tests: None\n",
+            "[main]\tINFO\tcli include tests: None\n",
+            "[main]\tINFO\tcli exclude tests: None\n",
+            "[main]\tINFO\trunning on Python 3.13.15\n",
+            "\u001b[95mRun started:2026-09-27 08:47:55.293104+00:00\u001b[0m\n",
+            "\u001b[95m\n",
+            "Test results:\u001b[0m\n",
+            "\tNo issues identified.\n",
+            "\u001b[95m\n",
+            "Code scanned:\u001b[0m\n",
+            "\tTotal lines of code: 0\n",
+            "\tTotal lines skipped (#nosec): 0\n",
+            "\u001b[95m\n",
+            "Run metrics:\u001b[0m\n",
+            "\tTotal issues (by severity):\n",
+            "\t\tUndefined: 0\n",
+            "\t\tLow: 0\n",
+            "\t\tMedium: 0\n",
+            "\t\tHigh: 0\n",
+            "\tTotal issues (by confidence):\n",
+            "\t\tUndefined: 0\n",
+            "\t\tLow: 0\n",
+            "\t\tMedium: 0\n",
+            "\t\tHigh: 0\n",
+            "\u001b[95mFiles skipped (1):\u001b[0m\n",
+            "\t./sample.py (No such file or directory)\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!bandit -r sample.py > bandit_report.txt"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "pbBQOSC-DUXT",
+        "outputId": "94e00c60-44dd-4837-ae82-3650930ec868"
+      },
+      "execution_count": 6,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[main]\tINFO\tprofile include tests: None\n",
+            "[main]\tINFO\tprofile exclude tests: None\n",
+            "[main]\tINFO\tcli include tests: None\n",
+            "[main]\tINFO\tcli exclude tests: None\n",
+            "[main]\tINFO\trunning on Python 3.13.15\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!flake8 sample.py > flake8_report.txt\n",
+        "!pylint sample.py > pylint_report.txt\n",
+        "!bandit -r sample.py > bandit_report.txt"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "Dc-SYsJyDxga",
+        "outputId": "1245503e-384f-4fee-a371-6039fa23d62a"
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[main]\tINFO\tprofile include tests: None\n",
+            "[main]\tINFO\tprofile exclude tests: None\n",
+            "[main]\tINFO\tcli include tests: None\n",
+            "[main]\tINFO\tcli exclude tests: None\n",
+            "[main]\tINFO\trunning on Python 3.13.15\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "with open(\"flake8_report.txt\", \"r\") as f:\n",
+        "    flake8 = f.read()\n",
+        "\n",
+        "with open(\"pylint_report.txt\", \"r\") as f:\n",
+        "    pylint = f.read()\n",
+        "\n",
+        "with open(\"bandit_report.txt\", \"r\") as f:\n",
+        "    bandit = f.read()\n",
+        "\n",
+        "print(\"Reports Loaded\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "acSnJLWzD6Ji",
+        "outputId": "b65c9531-0ae9-4de9-f343-1635d39b383a"
+      },
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Reports Loaded\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile sample.py\n",
+        "\n",
+        "import os\n",
+        "\n",
+        "password = \"12345\"\n",
+        "\n",
+        "def divide(a,b):\n",
+        "    return a/b\n",
+        "\n",
+        "print(divide(10,0))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "D6ogMKftQYOW",
+        "outputId": "89c06f1a-b6fc-430d-a694-79306c6b988d"
+      },
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Writing sample.py\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!ls"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "fs6j3T7oQeD9",
+        "outputId": "5797285c-7f97-4887-ac73-fe7d106827c1"
+      },
+      "execution_count": 12,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "bandit_report.txt  flake8_report.txt  pylint_report.txt  sample_data  sample.py\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!flake8 sample.py > flake8_report.txt\n",
+        "!pylint sample.py > pylint_report.txt\n",
+        "!bandit -r sample.py > bandit_report.txt"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "dZwqHKRqQiXi",
+        "outputId": "2db856c2-3f28-4b9f-f609-2988f86bc158"
+      },
+      "execution_count": 13,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "[main]\tINFO\tprofile include tests: None\n",
+            "[main]\tINFO\tprofile exclude tests: None\n",
+            "[main]\tINFO\tcli include tests: None\n",
+            "[main]\tINFO\tcli exclude tests: None\n",
+            "[main]\tINFO\trunning on Python 3.13.15\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!cat bandit_report.txt"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "H-JBWRsEQwTQ",
+        "outputId": "d91e9e97-fc16-4c32-c7be-23fe24bba93a"
+      },
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Run started:2026-09-27 09:46:26.028687+00:00\n",
+            "\n",
+            "Test results:\n",
+            ">> Issue: [B105:hardcoded_password_string] Possible hardcoded password: '12345'\n",
+            "   Severity: Low   Confidence: Medium\n",
+            "   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)\n",
+            "   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html\n",
+            "   Location: ./sample.py:4:11\n",
+            "3\t\n",
+            "4\tpassword = \"12345\"\n",
+            "5\t\n",
+            "\n",
+            "--------------------------------------------------\n",
+            "\n",
+            "Code scanned:\n",
+            "\tTotal lines of code: 5\n",
+            "\tTotal lines skipped (#nosec): 0\n",
+            "\tTotal potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0\n",
+            "\n",
+            "Run metrics:\n",
+            "\tTotal issues (by severity):\n",
+            "\t\tUndefined: 0\n",
+            "\t\tLow: 1\n",
+            "\t\tMedium: 0\n",
+            "\t\tHigh: 0\n",
+            "\tTotal issues (by confidence):\n",
+            "\t\tUndefined: 0\n",
+            "\t\tLow: 0\n",
+            "\t\tMedium: 1\n",
+            "\t\tHigh: 0\n",
+            "Files skipped (0):\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "with open(\"flake8_report.txt\", \"r\") as f:\n",
+        "    flake8 = f.read()\n",
+        "\n",
+        "with open(\"pylint_report.txt\", \"r\") as f:\n",
+        "    pylint = f.read()\n",
+        "\n",
+        "with open(\"bandit_report.txt\", \"r\") as f:\n",
+        "    bandit = f.read()\n",
+        "\n",
+        "print(\"Reports Loaded Successfully\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "H6rSDHp4RKVa",
+        "outputId": "8287060f-d6aa-47f0-f539-79f148a76de7"
+      },
+      "execution_count": 15,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Reports Loaded Successfully\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "combined_report = f\"\"\"\n",
+        "FLAKE8 REPORT:\n",
+        "{flake8}\n",
+        "\n",
+        "PYLINT REPORT:\n",
+        "{pylint}\n",
+        "\n",
+        "BANDIT REPORT:\n",
+        "{bandit}\n",
+        "\"\"\"\n",
+        "\n",
+        "print(combined_report)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "qbRFVGmzRM77",
+        "outputId": "f49d6600-d623-4934-bbf7-f0c30fbd8513"
+      },
+      "execution_count": 16,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "FLAKE8 REPORT:\n",
+            "sample.py:2:1: F401 'os' imported but unused\n",
+            "sample.py:6:1: E302 expected 2 blank lines, found 1\n",
+            "sample.py:6:13: E231 missing whitespace after ','\n",
+            "sample.py:9:1: E305 expected 2 blank lines after class or function definition, found 1\n",
+            "sample.py:9:16: E231 missing whitespace after ','\n",
+            "\n",
+            "\n",
+            "PYLINT REPORT:\n",
+            "************* Module sample\n",
+            "sample.py:1:0: C0114: Missing module docstring (missing-module-docstring)\n",
+            "sample.py:4:0: C0103: Constant name \"password\" doesn't conform to UPPER_CASE naming style (invalid-name)\n",
+            "sample.py:6:0: C0116: Missing function or method docstring (missing-function-docstring)\n",
+            "sample.py:2:0: W0611: Unused import os (unused-import)\n",
+            "\n",
+            "-----------------------------------\n",
+            "Your code has been rated at 2.00/10\n",
+            "\n",
+            "\n",
+            "\n",
+            "BANDIT REPORT:\n",
+            "Run started:2026-09-27 09:46:26.028687+00:00\n",
+            "\n",
+            "Test results:\n",
+            ">> Issue: [B105:hardcoded_password_string] Possible hardcoded password: '12345'\n",
+            "   Severity: Low   Confidence: Medium\n",
+            "   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)\n",
+            "   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html\n",
+            "   Location: ./sample.py:4:11\n",
+            "3\t\n",
+            "4\tpassword = \"12345\"\n",
+            "5\t\n",
+            "\n",
+            "--------------------------------------------------\n",
+            "\n",
+            "Code scanned:\n",
+            "\tTotal lines of code: 5\n",
+            "\tTotal lines skipped (#nosec): 0\n",
+            "\tTotal potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0\n",
+            "\n",
+            "Run metrics:\n",
+            "\tTotal issues (by severity):\n",
+            "\t\tUndefined: 0\n",
+            "\t\tLow: 1\n",
+            "\t\tMedium: 0\n",
+            "\t\tHigh: 0\n",
+            "\tTotal issues (by confidence):\n",
+            "\t\tUndefined: 0\n",
+            "\t\tLow: 0\n",
+            "\t\tMedium: 1\n",
+            "\t\tHigh: 0\n",
+            "Files skipped (0):\n",
+            "\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "prompt = f\"\"\"\n",
+        "You are an expert code reviewer.\n",
+        "\n",
+        "Analyze the following static-analysis results.\n",
+        "\n",
+        "For each issue:\n",
+        "1. Explain the issue.\n",
+        "2. Explain why it matters.\n",
+        "3. Suggest a fix.\n",
+        "\n",
+        "Analysis Results:\n",
+        "\n",
+        "{combined_report}\n",
+        "\"\"\"\n",
+        "\n",
+        "print(prompt)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "RhrwlgDyRXYD",
+        "outputId": "2e43f2ac-4a37-491e-d182-3d716234cb24"
+      },
+      "execution_count": 17,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "You are an expert code reviewer.\n",
+            "\n",
+            "Analyze the following static-analysis results.\n",
+            "\n",
+            "For each issue:\n",
+            "1. Explain the issue.\n",
+            "2. Explain why it matters.\n",
+            "3. Suggest a fix.\n",
+            "\n",
+            "Analysis Results:\n",
+            "\n",
+            "\n",
+            "FLAKE8 REPORT:\n",
+            "sample.py:2:1: F401 'os' imported but unused\n",
+            "sample.py:6:1: E302 expected 2 blank lines, found 1\n",
+            "sample.py:6:13: E231 missing whitespace after ','\n",
+            "sample.py:9:1: E305 expected 2 blank lines after class or function definition, found 1\n",
+            "sample.py:9:16: E231 missing whitespace after ','\n",
+            "\n",
+            "\n",
+            "PYLINT REPORT:\n",
+            "************* Module sample\n",
+            "sample.py:1:0: C0114: Missing module docstring (missing-module-docstring)\n",
+            "sample.py:4:0: C0103: Constant name \"password\" doesn't conform to UPPER_CASE naming style (invalid-name)\n",
+            "sample.py:6:0: C0116: Missing function or method docstring (missing-function-docstring)\n",
+            "sample.py:2:0: W0611: Unused import os (unused-import)\n",
+            "\n",
+            "-----------------------------------\n",
+            "Your code has been rated at 2.00/10\n",
+            "\n",
+            "\n",
+            "\n",
+            "BANDIT REPORT:\n",
+            "Run started:2026-09-27 09:46:26.028687+00:00\n",
+            "\n",
+            "Test results:\n",
+            ">> Issue: [B105:hardcoded_password_string] Possible hardcoded password: '12345'\n",
+            "   Severity: Low   Confidence: Medium\n",
+            "   CWE: CWE-259 (https://cwe.mitre.org/data/definitions/259.html)\n",
+            "   More Info: https://bandit.readthedocs.io/en/1.9.4/plugins/b105_hardcoded_password_string.html\n",
+            "   Location: ./sample.py:4:11\n",
+            "3\t\n",
+            "4\tpassword = \"12345\"\n",
+            "5\t\n",
+            "\n",
+            "--------------------------------------------------\n",
+            "\n",
+            "Code scanned:\n",
+            "\tTotal lines of code: 5\n",
+            "\tTotal lines skipped (#nosec): 0\n",
+            "\tTotal potential issues skipped due to specifically being disabled (e.g., #nosec BXXX): 0\n",
+            "\n",
+            "Run metrics:\n",
+            "\tTotal issues (by severity):\n",
+            "\t\tUndefined: 0\n",
+            "\t\tLow: 1\n",
+            "\t\tMedium: 0\n",
+            "\t\tHigh: 0\n",
+            "\tTotal issues (by confidence):\n",
+            "\t\tUndefined: 0\n",
+            "\t\tLow: 0\n",
+            "\t\tMedium: 1\n",
+            "\t\tHigh: 0\n",
+            "Files skipped (0):\n",
+            "\n",
+            "\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "review = \"\"\"\n",
+        "Issue 1: Hardcoded Password\n",
+        "\n",
+        "Explanation:\n",
+        "The password '12345' is stored directly in the source code.\n",
+        "\n",
+        "Why it Matters:\n",
+        "Hardcoded credentials can be exposed if the code is shared publicly.\n",
+        "\n",
+        "Suggested Fix:\n",
+        "Store sensitive values in environment variables.\n",
+        "\n",
+        "------------------------------------------------\n",
+        "\n",
+        "Issue 2: Unused Import\n",
+        "\n",
+        "Explanation:\n",
+        "The os module is imported but never used.\n",
+        "\n",
+        "Suggested Fix:\n",
+        "Remove the import statement.\n",
+        "\n",
+        "------------------------------------------------\n",
+        "\n",
+        "Issue 3: Missing Whitespace After Comma\n",
+        "\n",
+        "Explanation:\n",
+        "PEP 8 recommends a space after commas.\n",
+        "\n",
+        "Suggested Fix:\n",
+        "Change:\n",
+        "def divide(a,b)\n",
+        "\n",
+        "To:\n",
+        "def divide(a, b)\n",
+        "\"\"\"\n",
+        "\n",
+        "print(review)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "EPVAT7KzRey8",
+        "outputId": "5574e48a-1873-4334-e259-18e6afdf0c8e"
+      },
+      "execution_count": 18,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "\n",
+            "Issue 1: Hardcoded Password\n",
+            "\n",
+            "Explanation:\n",
+            "The password '12345' is stored directly in the source code.\n",
+            "\n",
+            "Why it Matters:\n",
+            "Hardcoded credentials can be exposed if the code is shared publicly.\n",
+            "\n",
+            "Suggested Fix:\n",
+            "Store sensitive values in environment variables.\n",
+            "\n",
+            "------------------------------------------------\n",
+            "\n",
+            "Issue 2: Unused Import\n",
+            "\n",
+            "Explanation:\n",
+            "The os module is imported but never used.\n",
+            "\n",
+            "Suggested Fix:\n",
+            "Remove the import statement.\n",
+            "\n",
+            "------------------------------------------------\n",
+            "\n",
+            "Issue 3: Missing Whitespace After Comma\n",
+            "\n",
+            "Explanation:\n",
+            "PEP 8 recommends a space after commas.\n",
+            "\n",
+            "Suggested Fix:\n",
+            "Change:\n",
+            "def divide(a,b)\n",
+            "\n",
+            "To:\n",
+            "def divide(a, b)\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "%%writefile sample_fixed.py\n",
+        "\n",
+        "def divide(a, b):\n",
+        "    if b == 0:\n",
+        "        return \"Cannot divide by zero\"\n",
+        "    return a / b\n",
+        "\n",
+        "\n",
+        "print(divide(10, 2))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "SHd4VwkLRtsN",
+        "outputId": "1060bbe0-3a77-4365-b2f7-4aa4de6e3147"
+      },
+      "execution_count": 19,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Writing sample_fixed.py\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!flake8 sample_fixed.py\n",
+        "!pylint sample_fixed.py\n",
+        "!bandit -r sample_fixed.py"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "yrGoGyXmRwPf",
+        "outputId": "d3af566a-9d42-488e-85e4-2ab65b5aa4bc"
+      },
+      "execution_count": 20,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "************* Module sample_fixed\n",
+            "sample_fixed.py:1:0: C0114: Missing module docstring (missing-module-docstring)\n",
+            "sample_fixed.py:2:0: C0116: Missing function or method docstring (missing-function-docstring)\n",
+            "\n",
+            "-----------------------------------\n",
+            "Your code has been rated at 6.00/10\n",
+            "\n",
+            "[main]\tINFO\tprofile include tests: None\n",
+            "[main]\tINFO\tprofile exclude tests: None\n",
+            "[main]\tINFO\tcli include tests: None\n",
+            "[main]\tINFO\tcli exclude tests: None\n",
+            "[main]\tINFO\trunning on Python 3.13.15\n",
+            "\u001b[95mRun started:2026-09-27 09:51:46.679195+00:00\u001b[0m\n",
+            "\u001b[95m\n",
+            "Test results:\u001b[0m\n",
+            "\tNo issues identified.\n",
+            "\u001b[95m\n",
+            "Code scanned:\u001b[0m\n",
+            "\tTotal lines of code: 5\n",
+            "\tTotal lines skipped (#nosec): 0\n",
+            "\u001b[95m\n",
+            "Run metrics:\u001b[0m\n",
+            "\tTotal issues (by severity):\n",
+            "\t\tUndefined: 0\n",
+            "\t\tLow: 0\n",
+            "\t\tMedium: 0\n",
+            "\t\tHigh: 0\n",
+            "\tTotal issues (by confidence):\n",
+            "\t\tUndefined: 0\n",
+            "\t\tLow: 0\n",
+            "\t\tMedium: 0\n",
+            "\t\tHigh: 0\n",
+            "\u001b[95mFiles skipped (0):\u001b[0m\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "\"\"\"Sample calculator module.\"\"\"\n",
+        "\n",
+        "def divide(a, b):\n",
+        "    \"\"\"Divide two numbers safely.\"\"\"\n",
+        "    if b == 0:\n",
+        "        return \"Cannot divide by zero\"\n",
+        "    return a / b\n",
+        "\n",
+        "\n",
+        "print(divide(10, 2))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "RVvzHKNXScnb",
+        "outputId": "5799241f-1694-43e5-8721-b4e45ada1b03"
+      },
+      "execution_count": 21,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "5.0\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pylint sample_fixed.py"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "VSIZxxglSe5Q",
+        "outputId": "602e5a57-2bcc-4381-c874-183f82fd6410"
+      },
+      "execution_count": 22,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "************* Module sample_fixed\n",
+            "sample_fixed.py:1:0: C0114: Missing module docstring (missing-module-docstring)\n",
+            "sample_fixed.py:2:0: C0116: Missing function or method docstring (missing-function-docstring)\n",
+            "\n",
+            "------------------------------------------------------------------\n",
+            "Your code has been rated at 6.00/10 (previous run: 6.00/10, +0.00)\n",
+            "\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
