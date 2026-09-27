@@ -1,0 +1,4 @@
+File,LOC,Complexity Indicators,Security Findings,Risk Score,Risk Level
+auth.py,4,2,1,12.04,MEDIUM
+database.py,7,0,1,10.07,MEDIUM
+utils.py,8,4,0,4.08,LOW
