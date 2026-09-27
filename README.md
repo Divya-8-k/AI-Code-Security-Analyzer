@@ -59,4 +59,4 @@ AI-Code-Security-Analyzer/
 
 ## Author
 
-Dharshini A.
+Divya K.
